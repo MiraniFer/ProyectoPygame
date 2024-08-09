@@ -98,7 +98,7 @@ def main_game():
     y_speed = 0
 
     hongo_list = pygame.sprite.Group()
-    piedra_list = pygame.sprite.Group()  # Grupo para piedras
+    piedra_list = pygame.sprite.Group()  
     all_sprite_list = pygame.sprite.Group()
 
     # Crear hongos
