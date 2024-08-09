@@ -5,6 +5,7 @@ import random
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
+GREEN=(0, 255, 0)
 
 # Configuración inicial de Pygame
 pygame.init()
@@ -70,6 +71,30 @@ def show_game_over():
                 if event.key == pygame.K_ESCAPE:  # ESC para salir
                     pygame.quit()
                     quit()
+def show_you_win():
+    """Función para mostrar el mensaje de You Win."""
+    font = pygame.font.Font(fuente, 74)
+    small_font = pygame.font.Font(None, 36)
+    screen.blit(background, [0, 0])
+    win_text = font.render("You Win!", True, GREEN)
+    restart_text = small_font.render("Presiona ENTER para salir", True, BLACK)
+    screen.blit(win_text, (250, 200))
+    screen.blit(restart_text, (250, 300))
+    pygame.display.flip()
+    
+    # Esperar a que el jugador presione ENTER para salir
+    you_win = True
+    while you_win:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:  # ENTER para salir
+                    you_win = False
+                if event.key == pygame.K_ESCAPE:  # ESC para salir
+                    pygame.quit()
+                    quit()                    
 
 def main_game():
     """Función que contiene la lógica del juego."""
@@ -120,6 +145,9 @@ def main_game():
     player = Player()
     all_sprite_list.add(player)
 
+    total_hongos = len(hongo_list)
+    collected_hongos = 0
+
     pygame.mixer.music.load("musica_fondo.mp3")
     pygame.mixer.music.play()
 
@@ -147,12 +175,17 @@ def main_game():
         player.rect.y += y_speed
 
         # Detectar colisiones con los hongos
-        pygame.sprite.spritecollide(player, hongo_list, True)
+        collected_hongos += len(pygame.sprite.spritecollide(player, hongo_list, True))
 
         # Detectar colisiones con las piedras (obstáculos)
         if pygame.sprite.spritecollide(player, piedra_list, False):
             # Terminar el juego si el jugador toca una piedra
             show_game_over()
+            done = True
+        
+        if collected_hongos >= total_hongos:
+            # Mostrar mensaje de "You Win" si el jugador recoge todos los hongos
+            show_you_win()
             done = True
 
         screen.blit(background, [0, 0])
